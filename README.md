@@ -1,70 +1,131 @@
-# Getting Started with Create React App
+# Patient Notifier Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend part of the Patient Notifier system, which is a React application designed to manage patient information and send notifications based on specific criteria.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+The frontend application includes functionalities to:
+- View the list of patients.
+  - Allows searching through the list of patients.
+  - Retrieves patient data dynamically from the database.
+  - Displays patient details including name, age, and contact information.
+![Patient List](https://github.com/user-attachments/assets/fae1ac2b-619f-4737-892f-af7a0e293f57)
 
-### `npm start`
+- Add a new patient.
+  - Takes input for patient details such as name, age, gender, and contact information.
+  - Validates input fields; for example, it shows an alert if the name field is left empty and does not accept the submission.
+  - Adds the new patient to the database upon successful validation.
+![add_patient](https://github.com/user-attachments/assets/8f0d8f3e-20ba-4fc0-a1d0-c1f33d8e2e3a)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Edit patient information.
+  - Provides a form to edit existing patient details.
+  - Validates inputs similar to the add patient functionality.
+  - Updates the patient information in the database upon successful validation.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Delete a patient.
+  - Allows the user to remove a patient from the list.
+  - Confirms the deletion action to prevent accidental deletions.
 
-### `npm test`
+- Send notifications to patients.
+  - Simulates sending notifications to patients based on their preferences (e.g., email, SMS).
+  - Lists successful delivery results, indicating which patients received the notifications.
+![startsending](https://github.com/user-attachments/assets/a3437d82-a42d-46bc-865d-eb819ebf8b00)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- View the list of Target Criteria.
+  - Displays a list of patients who meet specific target criteria.
+![target table](https://github.com/user-attachments/assets/36c5e206-67e7-404c-9804-cbcc80650fe9)
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Getting Started
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+These instructions will help you set up and run the frontend application on your local machine for development and testing purposes.
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/yourusername/patient-notifier-frontend.git
+    ```
+2. Navigate to the project directory:
+    ```sh
+    cd patient-notifier-frontend
+    ```
+3. Install the dependencies:
+    ```sh
+    npm install
+    ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Running the Application
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+To start the development server:
+```sh
+npm start
+```
+This will run the application in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+## API Endpoints
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Get All Patients
+- **URL**: `/patients`
+- **Method**: `GET`
+- **Description**: Retrieves all patients.
+- **Response**: `List<Patient>`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Get Filtered Patients
+- **URL**: `/patients/filtered`
+- **Method**: `GET`
+- **Description**: Retrieves all filtered patients based on criteria.
+- **Response**: `List<FilteredPatient>`
 
-### Code Splitting
+### Add a New Patient
+- **URL**: `/patients`
+- **Method**: `POST`
+- **Description**: Adds a new patient.
+- **Request Body**: `Patient`
+- **Response**: `void`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Update an Existing Patient
+- **URL**: `/patients/{id}`
+- **Method**: `PUT`
+- **Description**: Updates an existing patient by ID.
+- **Request Body**: `Patient`
+- **Response**: `ResponseEntity<?>`
 
-### Analyzing the Bundle Size
+### Delete a Patient
+- **URL**: `/patients/{id}`
+- **Method**: `DELETE`
+- **Description**: Deletes a patient by ID.
+- **Response**: `void`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Find Patients by Name
+- **URL**: `/patients/findByName/{name}`
+- **Method**: `GET`
+- **Description**: Finds patients by name.
+- **Response**: `List<Patient>`
 
-### Making a Progressive Web App
+### Search Patients with Multiple Criteria
+- **URL**: `/patients/search`
+- **Method**: `GET`
+- **Description**: Searches patients with multiple criteria (name, gender, age range).
+- **Response**: `List<Patient>`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Find Patients by Age Range
+- **URL**: `/patients/findByAgeRange/{minAge}/{maxAge}`
+- **Method**: `GET`
+- **Description**: Finds patients by age range.
+- **Response**: `List<Patient>`
 
-### Advanced Configuration
+### Find Patients by Notification Preference
+- **URL**: `/patients/findByNotificationPreference/{preference}`
+- **Method**: `GET`
+- **Description**: Finds patients by notification preference.
+- **Response**: `List<Patient>`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Send Notifications to Patients
+- **URL**: `/patients/sendNotifications`
+- **Method**: `POST`
+- **Description**: Simulates a system that sends notifications to patients based on their preferences and lists successful delivery results.
+- **Response**: `ResponseEntity<List<NotificationResult>>`
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
