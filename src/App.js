@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.scss';
 import { Button, Dialog, FormHelperText , Input, DialogActions, DialogContent, DialogTitle, Typography, Grid, TextField, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 
+ // State variables for managing the current view and data
 function App() {
   const [currentView, setCurrentView] = useState('patients');
   const [patients, setPatients] = useState([]);
@@ -20,6 +21,7 @@ function App() {
     }
   }, [currentView]);
 
+  // Function to fetch the list of patients
   const fetchPatients = async () => {
     try {
       const response = await axios.get('http://localhost:8080/patients');
@@ -37,7 +39,7 @@ function App() {
       console.error('There was an error sending notifications!', error);
     }
   };
-
+  // Function to fetch the target list of patients
   const fetchFilteredPatients = async () => {
     try {
       const response = await axios.get('http://localhost:8080/patients/filtered');
@@ -46,7 +48,7 @@ function App() {
       console.error('There was an error fetching filtered patients!', error);
     }
   };
-
+  // Handler for updating search parameters
   const handleSearchChange = (e) => {
     const { name, value } = e.target;
     setSearchParams({
@@ -54,7 +56,7 @@ function App() {
       [name]: value
     });
   };
-
+  // Function to handle search based on search parameters
   const handleSearch = async () => {
     try {
       const response = await axios.get('http://localhost:8080/patients/search', {
@@ -65,7 +67,7 @@ function App() {
       console.error('There was an error searching the patients!', error);
     }
   };
-
+  // Function to handle deletion of a patient
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
 
@@ -78,7 +80,7 @@ function App() {
       }
     }
   };
-
+  // Render the main app component
   return (
     <div className="app">
       <Typography variant="h1" gutterBottom>Patient Notifier</Typography>
@@ -90,10 +92,10 @@ function App() {
           <Button variant={currentView === 'addPatient' ? 'contained' : 'outlined'} onClick={() => setCurrentView('addPatient')}>Add Patient</Button>
         </Grid>
         <Grid item>
-          <Button variant={currentView === 'notifications' ? 'contained' : 'outlined'} onClick={() => setCurrentView('notifications')}>Start</Button>
+          <Button variant={currentView === 'notifications' ? 'contained' : 'outlined'} onClick={() => setCurrentView('notifications')}>Start Sending</Button>
         </Grid>
         <Grid item>
-          <Button variant={currentView === 'filteredPatients' ? 'contained' : 'outlined'} onClick={() => setCurrentView('filteredPatients')}>Filtered Patients</Button>
+          <Button variant={currentView === 'filteredPatients' ? 'contained' : 'outlined'} onClick={() => setCurrentView('filteredPatients')}>Target Table</Button>
         </Grid>
       </Grid>
 
@@ -131,7 +133,7 @@ function App() {
     </div>
   );
 }
-
+// Component for searching patients
 function PatientSearch({ searchParams, onSearchChange, onSearch }) {
   return (
     <div className="patient-search">
@@ -192,7 +194,7 @@ function PatientSearch({ searchParams, onSearchChange, onSearch }) {
     </div>
   );
 }
-
+// Component for displaying the list of patients
 function PatientList({ patients, onDelete }) {
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -230,7 +232,7 @@ function PatientList({ patients, onDelete }) {
     });
     setOpenUpdateDialog(true);
   };
-
+  // Handler for closing the update dialog
   const handleCloseUpdateDialog = () => {
     setOpenUpdateDialog(false);
     setSelectedPatient(null);
@@ -250,7 +252,6 @@ function PatientList({ patients, onDelete }) {
       birthDateError: false,
       genderError: false,
       notificationPreferenceError: false
-      // Reset other errors as needed
     });
   };
 
@@ -263,8 +264,6 @@ function PatientList({ patients, onDelete }) {
       const selectedDate = new Date(value);
       
       if (selectedDate > today) {
-        // Handle the error or notify the user
-        // For example, you can show a message or prevent submission
         console.log('Invalid birth date');
         return;
       }
@@ -282,7 +281,6 @@ function PatientList({ patients, onDelete }) {
     });
   };
   const handleUpdateSubmit = async () => {
-    // Check for empty required fields
     let hasError = false;
     Object.keys(updatedPatient).forEach(key => {
       if (updatedPatient[key] === '' && key !== 'nationalId' && key !== 'passportNumber' && key !== 'email' && key !== 'phoneNumber') {
@@ -294,9 +292,7 @@ function PatientList({ patients, onDelete }) {
       }
     });
 
-    // If there's an error, show Snackbar or Alert
     if (hasError) {
-      // Show Snackbar or Alert
       return;
     }
 
@@ -308,7 +304,7 @@ function PatientList({ patients, onDelete }) {
       console.error('Error updating patient:', error);
     }
   };
-
+// Render the list of patients and the update dialog
   return (
     <div>
       <Typography variant="h2" gutterBottom>Patient List</Typography>
@@ -466,7 +462,7 @@ function PatientList({ patients, onDelete }) {
     </div>
   );
 }
-
+// Component for adding a new patient
 function AddPatient({ refresh, onClose }) {
   const [newPatient, setNewPatient] = useState({
     name: '',
@@ -480,7 +476,7 @@ function AddPatient({ refresh, onClose }) {
   });
 
   const [errorText, setErrorText] = useState('');
-
+ // Handler for input changes in the add patient form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewPatient({
@@ -655,9 +651,10 @@ function FilteredPatientList({ filteredPatients }) {
     );
   }, [searchTerm, filteredPatients]);
 
+
   return (
     <div className="filtered-patient-list-container">
-      <Typography variant="h2">Filtered Patients</Typography>
+      <Typography variant="h2">Target Table</Typography>
       <div className="filtered-patient-list">
         <div className="filtered-patient-header">
           <strong>Name</strong>
@@ -683,6 +680,7 @@ function FilteredPatientList({ filteredPatients }) {
     </div>
   );
 }
+
 function NotificationList({ notifications }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredNotifications, setFilteredNotifications] = useState(notifications);
@@ -703,20 +701,13 @@ function NotificationList({ notifications }) {
   return (
     <div className="notification-list-container">
       <Typography variant="h2">Notifications</Typography>
-      <TextField
-        type="text"
-        placeholder="Search notifications..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input"
-      />
+
       <div className="notification-list">
         <div className="notification-header">
           <strong>Name</strong>
           <strong>Gender</strong>
           <strong>Notification Type</strong>
           <strong>Phone Number</strong>
-          <strong>Email</strong>
           <strong>Message</strong>
         </div>
         {filteredNotifications.map((notification) => (
@@ -725,7 +716,6 @@ function NotificationList({ notifications }) {
             <span>{notification.gender}</span>
             <span>{notification.notificationType}</span>
             <span>{notification.phoneNumber}</span>
-            <span>{notification.email}</span>
             <span>{notification.message}</span>
           </div>
         ))}
