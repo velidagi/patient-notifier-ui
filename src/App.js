@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css';
+import './App.scss';
+import { Button, Dialog, FormHelperText , Input, DialogActions, DialogContent, DialogTitle, Typography, Grid, TextField, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
 
 function App() {
   const [currentView, setCurrentView] = useState('patients');
@@ -65,76 +66,13 @@ function App() {
     }
   };
 
-  return (
-    <div className="app">
-      <h1>Notification System</h1>
-      <div className="buttons">
-        <button onClick={() => setCurrentView('patients')}>Patient List</button>
-        <button onClick={() => setCurrentView('addPatient')}>Add Patient</button>
-        <button onClick={() => setCurrentView('notifications')}>Start</button>
-        <button onClick={() => setCurrentView('filteredPatients')}>Filtered Patients</button>
-      </div>
-
-      {currentView === 'patients' && (
-        <div>
-          <PatientSearch searchParams={searchParams} onSearchChange={handleSearchChange} onSearch={handleSearch} />
-          <PatientList patients={patients} refresh={fetchPatients} />
-        </div>
-      )}
-      {currentView === 'addPatient' && <AddPatient refresh={fetchPatients} onClose={() => setCurrentView('patients')} />}
-      {currentView === 'notifications' && <NotificationList notifications={notifications} />}
-      {currentView === 'filteredPatients' && <FilteredPatientList filteredPatients={filteredPatients} />}
-    </div>
-  );
-}
-
-function PatientSearch({ searchParams, onSearchChange, onSearch }) {
-  return (
-    <div className="patient-search">
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={searchParams.name}
-        onChange={onSearchChange}
-        className="search-input"
-      />
-      <input
-        type="number"
-        name="minAge"
-        placeholder="Min Age"
-        value={searchParams.minAge}
-        onChange={onSearchChange}
-        className="search-input"
-      />
-      <input
-        type="number"
-        name="maxAge"
-        placeholder="Max Age"
-        value={searchParams.maxAge}
-        onChange={onSearchChange}
-        className="search-input"
-      />
-      <select name="gender" value={searchParams.gender} onChange={onSearchChange} className="search-input">
-        <option value="">Select Gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-      <button onClick={onSearch} className="search-button">Search</button>
-    </div>
-  );
-}
-
-
-
-function PatientList({ patients, refresh }) {
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete?");
 
     if (confirmDelete) {
       try {
         await axios.delete(`http://localhost:8080/patients/${id}`);
-        refresh(); // refresh the list of patients
+        fetchPatients(); // refresh the list of patients
       } catch (error) {
         console.error('There was an error deleting the patient!', error);
       }
@@ -142,8 +80,238 @@ function PatientList({ patients, refresh }) {
   };
 
   return (
+    <div className="app">
+      <Typography variant="h1" gutterBottom>Patient Notifier</Typography>
+      <Grid container spacing={2} alignItems="center" justify="center">
+        <Grid item>
+          <Button variant={currentView === 'patients' ? 'contained' : 'outlined'} onClick={() => setCurrentView('patients')}>Patient List</Button>
+        </Grid>
+        <Grid item>
+          <Button variant={currentView === 'addPatient' ? 'contained' : 'outlined'} onClick={() => setCurrentView('addPatient')}>Add Patient</Button>
+        </Grid>
+        <Grid item>
+          <Button variant={currentView === 'notifications' ? 'contained' : 'outlined'} onClick={() => setCurrentView('notifications')}>Start</Button>
+        </Grid>
+        <Grid item>
+          <Button variant={currentView === 'filteredPatients' ? 'contained' : 'outlined'} onClick={() => setCurrentView('filteredPatients')}>Filtered Patients</Button>
+        </Grid>
+      </Grid>
+
+      {currentView === 'patients' && (
+        <Grid container spacing={2} justify="center">
+          <Grid item xs={12}>
+            <PatientSearch searchParams={searchParams} onSearchChange={handleSearchChange} onSearch={handleSearch} />
+          </Grid>
+          <Grid item xs={12}>
+            <PatientList patients={patients} onDelete={handleDelete} />
+          </Grid>
+        </Grid>
+      )}
+      {currentView === 'addPatient' && (
+        <Grid container justify="center">
+          <Grid item xs={12} md={8} lg={6}>
+            <AddPatient refresh={fetchPatients} onClose={() => setCurrentView('patients')} />
+          </Grid>
+        </Grid>
+      )}
+      {currentView === 'notifications' && (
+        <Grid container justify="center">
+          <Grid item xs={12} md={8} lg={6}>
+            <NotificationList notifications={notifications} />
+          </Grid>
+        </Grid>
+      )}
+      {currentView === 'filteredPatients' && (
+        <Grid container justify="center">
+          <Grid item xs={12} md={8} lg={6}>
+            <FilteredPatientList filteredPatients={filteredPatients} />
+          </Grid>
+        </Grid>
+      )}
+    </div>
+  );
+}
+
+function PatientSearch({ searchParams, onSearchChange, onSearch }) {
+  return (
+    <div className="patient-search">
+      <Grid container spacing={2} alignItems="center">
+        <Grid item>
+          <TextField
+            name="name"
+            label="Name"
+            value={searchParams.name}
+            onChange={onSearchChange}
+          />
+        </Grid>
+        <Grid container alignItems="center" spacing={2} className="age-range-container">
+      <Grid item>
+      </Grid>
+      <Grid item>
+        <TextField
+          name="minAge"
+          label="Min Age"
+          type="number"
+          value={searchParams.minAge}
+          onChange={onSearchChange}
+          className="age-range-input"
+        />
+      </Grid>
+      <Grid item className="age-range-separator">
+        <Typography variant="subtitle1">-</Typography>
+      </Grid>
+      <Grid item>
+        <TextField
+          name="maxAge"
+          label="Max Age"
+          type="number"
+          value={searchParams.maxAge}
+          onChange={onSearchChange}
+          className="age-range-input"
+        />
+      </Grid>
+    </Grid>
+        <Grid item>
+      <FormControl style={{ minWidth: 200 }}>
+        <InputLabel>Select Gender</InputLabel>
+        <Select
+          name="gender"
+          value={searchParams.gender}
+          onChange={onSearchChange}
+        >
+          <MenuItem value="">Select Gender</MenuItem>
+          <MenuItem value="Male">Male</MenuItem>
+          <MenuItem value="Female">Female</MenuItem>
+        </Select>
+      </FormControl>
+    </Grid>
+        <Grid item>
+          <Button variant="contained" color="primary" onClick={onSearch}>Search</Button>
+        </Grid>
+      </Grid>
+    </div>
+  );
+}
+
+function PatientList({ patients, onDelete }) {
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [updatedPatient, setUpdatedPatient] = useState({
+    id: '',
+    name: '',
+    birthDate: '',
+    gender: '',
+    nationalId: '',
+    passportNumber: '',
+    email: '',
+    phoneNumber: '',
+    notificationPreference: '',
+  });
+  const [formErrors, setFormErrors] = useState({
+    nameError: false,
+    birthDateError: false,
+    genderError: false,
+    notificationPreferenceError: false
+    // Add more errors as needed
+  });
+
+  const handleUpdateClick = (patient) => {
+    setSelectedPatient(patient);
+    setUpdatedPatient({
+      id: patient.id,
+      name: patient.name,
+      birthDate: patient.birthDate,
+      gender: patient.gender,
+      nationalId: patient.nationalId,
+      passportNumber: patient.passportNumber,
+      email: patient.email,
+      phoneNumber: patient.phoneNumber,
+      notificationPreference: patient.notificationPreference,
+    });
+    setOpenUpdateDialog(true);
+  };
+
+  const handleCloseUpdateDialog = () => {
+    setOpenUpdateDialog(false);
+    setSelectedPatient(null);
+    setUpdatedPatient({
+      id: '',
+      name: '',
+      birthDate: '',
+      gender: '',
+      nationalId: '',
+      passportNumber: '',
+      email: '',
+      phoneNumber: '',
+      notificationPreference: '',
+    });
+    setFormErrors({
+      nameError: false,
+      birthDateError: false,
+      genderError: false,
+      notificationPreferenceError: false
+      // Reset other errors as needed
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+  
+    // Restrict future dates for birthDate field
+    if (name === 'birthDate') {
+      const today = new Date();
+      const selectedDate = new Date(value);
+      
+      if (selectedDate > today) {
+        // Handle the error or notify the user
+        // For example, you can show a message or prevent submission
+        console.log('Invalid birth date');
+        return;
+      }
+    }
+  
+    setUpdatedPatient({
+      ...updatedPatient,
+      [name]: value,
+    });
+  
+    // Clear error when user starts typing again
+    setFormErrors({
+      ...formErrors,
+      [`${name}Error`]: false
+    });
+  };
+  const handleUpdateSubmit = async () => {
+    // Check for empty required fields
+    let hasError = false;
+    Object.keys(updatedPatient).forEach(key => {
+      if (updatedPatient[key] === '' && key !== 'nationalId' && key !== 'passportNumber' && key !== 'email' && key !== 'phoneNumber') {
+        setFormErrors(prevState => ({
+          ...prevState,
+          [`${key}Error`]: true
+        }));
+        hasError = true;
+      }
+    });
+
+    // If there's an error, show Snackbar or Alert
+    if (hasError) {
+      // Show Snackbar or Alert
+      return;
+    }
+
+    try {
+      await axios.put(`http://localhost:8080/patients/${updatedPatient.id}`, updatedPatient);
+      // Refresh patient list or perform necessary actions after update
+      handleCloseUpdateDialog();
+    } catch (error) {
+      console.error('Error updating patient:', error);
+    }
+  };
+
+  return (
     <div>
-      <h2>Patient List</h2>
+      <Typography variant="h2" gutterBottom>Patient List</Typography>
       <div className="patient-list">
         <div className="patient-header">
           <strong>Name</strong>
@@ -154,7 +322,6 @@ function PatientList({ patients, refresh }) {
           <strong>Email</strong>
           <strong>Phone Number</strong>
           <strong>Notification Preference</strong>
-          <strong>Age</strong>
           <strong>Actions</strong>
         </div>
         {patients.map((patient) => (
@@ -167,16 +334,135 @@ function PatientList({ patients, refresh }) {
             <span>{patient.email}</span>
             <span>{patient.phoneNumber}</span>
             <span>{patient.notificationPreference}</span>
-            <span>{patient.age}</span>
-            <button 
-              className="delete-button"
-              onClick={() => handleDelete(patient.id)}
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handleUpdateClick(patient)}
+            >
+              Update
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => onDelete(patient.id)}
             >
               Delete
-            </button>
+            </Button>
           </div>
         ))}
       </div>
+      <Dialog open={openUpdateDialog} onClose={handleCloseUpdateDialog} aria-labelledby="update-patient-dialog">
+        <DialogTitle id="update-patient-dialog-title">Update Patient</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                name="name"
+                label="Name"
+                value={updatedPatient.name}
+                onChange={handleChange}
+                fullWidth
+                required
+                error={formErrors.nameError}
+                helperText={formErrors.nameError && "Name is required"}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="birthDate"
+                label="Birth Date"
+                type="date"
+                value={updatedPatient.birthDate}
+                onChange={handleChange}
+                fullWidth
+                required
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={formErrors.birthDateError}
+                helperText={formErrors.birthDateError && "Birth Date is required"}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth error={formErrors.genderError}>
+                <InputLabel>Gender</InputLabel>
+                <Select
+                  name="gender"
+                  value={updatedPatient.gender}
+                  onChange={handleChange}
+                  required
+                >
+                  <MenuItem value="">Select Gender</MenuItem>
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth error={formErrors.notificationPreferenceError}>
+                <InputLabel>Notification Preference</InputLabel>
+                <Select
+                  name="notificationPreference"
+                  value={updatedPatient.notificationPreference}
+                  onChange={handleChange}
+                  required
+                >
+                  <MenuItem value="">Select Notification Preference</MenuItem>
+                  <MenuItem value="Email">Email</MenuItem>
+                  <MenuItem value="SMS">SMS</MenuItem>
+                </Select>
+                {formErrors.notificationPreferenceError && <FormHelperText error>Notification Preference is required</FormHelperText>}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="nationalId"
+                label="National ID"
+                value={updatedPatient.nationalId}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="passportNumber"
+                label="Passport Number"
+                value={updatedPatient.passportNumber}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="email"
+                label="Email"
+                type="email"
+                value={updatedPatient.email}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                name="phoneNumber"
+                label="Phone Number"
+                type="tel"
+                value={updatedPatient.phoneNumber}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleUpdateSubmit} color="primary">
+            Update
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
@@ -193,6 +479,8 @@ function AddPatient({ refresh, onClose }) {
     notificationPreference: ''
   });
 
+  const [errorText, setErrorText] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewPatient({
@@ -203,6 +491,19 @@ function AddPatient({ refresh, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!newPatient.email && !newPatient.phoneNumber) {
+      setErrorText("Please enter at least one of Email or Phone number");
+      return;
+    }
+    if (!newPatient.nationalId && !newPatient.passportNumber) {
+      setErrorText("Please enter at least one of National ID or Passport Number");
+      return;
+    }
+    const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
+    if (newPatient.birthDate > today) {
+      setErrorText('Birth Date cannot be in the future!');
+      return;
+    }
     try {
       await axios.post('http://localhost:8080/patients', newPatient);
       refresh(); // refresh the patient list
@@ -224,110 +525,208 @@ function AddPatient({ refresh, onClose }) {
 
   return (
     <div>
-      <h2>Add Patient</h2>
+      <Typography variant="h2" gutterBottom>Add Patient</Typography>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={newPatient.name}
-          onChange={handleChange}
-          className="add-input"
-        />
-        <input
-          type="date"
-          name="birthDate"
-          placeholder="Birth Date"
-          value={newPatient.birthDate}
-          onChange={handleChange}
-          className="add-input"
-        />
-        <select
-          name="gender"
-          value={newPatient.gender}
-          onChange={handleChange}
-          className="add-input"
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-        <input
-          type="text"
-          name="nationalId"
-          placeholder="National ID"
-          value={newPatient.nationalId}
-          onChange={handleChange}
-          className="add-input"
-        />
-        <input
-          type="text"
-          name="passportNumber"
-          placeholder="Passport Number"
-          value={newPatient.passportNumber}
-          onChange={handleChange}
-          className="add-input"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={newPatient.email}
-          onChange={handleChange}
-          className="add-input"
-        />
-        <input
-          type="tel"
-          name="phoneNumber"
-          placeholder="Phone Number"
-          value={newPatient.phoneNumber}
-          onChange={handleChange}
-          className="add-input"
-        />
-        <select
-          name="notificationPreference"
-          value={newPatient.notificationPreference}
-          onChange={handleChange}
-          className="add-input"
-        >
-          <option value="">Notification Preference</option>
-          <option value="SMS">SMS</option>
-          <option value="Email">Email</option>
-        </select>
-        <button type="submit" className="add-button">Add Patient</button>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              name="name"
+              label="Name"
+              value={newPatient.name}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              name="birthDate"
+              label="Birth Date"
+              type="date"
+              value={newPatient.birthDate}
+              onChange={handleChange}
+              fullWidth
+              required
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                max: new Date().toISOString().split('T')[0], // Maximum allowed date is today
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Gender</InputLabel>
+              <Select
+                name="gender"
+                value={newPatient.gender}
+                onChange={handleChange}
+                required
+              >
+                <MenuItem value="">Select Gender</MenuItem>
+                <MenuItem value="Male">Male</MenuItem>
+                <MenuItem value="Female">Female</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="nationalId"
+              label="National ID"
+              value={newPatient.nationalId}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="passportNumber"
+              label="Passport Number"
+              value={newPatient.passportNumber}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="email"
+              label="Email"
+              type="email"
+              value={newPatient.email}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              name="phoneNumber"
+              label="Phone Number"
+              type="tel"
+              value={newPatient.phoneNumber}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <InputLabel>Notification Preference</InputLabel>
+              <Select
+                name="notificationPreference"
+                value={newPatient.notificationPreference}
+                onChange={handleChange}
+                required
+              >
+                <MenuItem value="">Notification Preference</MenuItem>
+                <MenuItem value="SMS">SMS</MenuItem>
+                <MenuItem value="Email">Email</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2" color="error">
+              {errorText}
+            </Typography>
+            <Button type="submit" variant="contained" color="primary">Add Patient</Button>
+          </Grid>
+        </Grid>
       </form>
     </div>
   );
 }
+function FilteredPatientList({ filteredPatients }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredPatientsList, setFilteredPatientsList] = useState(filteredPatients);
 
-function NotificationList({ notifications }) {
+  useEffect(() => {
+    setFilteredPatientsList(
+      filteredPatients.filter(patient =>
+        patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.birthDate.includes(searchTerm) ||
+        patient.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.nationalId.includes(searchTerm) ||
+        patient.passportNumber.includes(searchTerm) ||
+        patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.phoneNumber.includes(searchTerm) ||
+        patient.notificationPreference.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.targetCriteria.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.targetCriteria.targetCriteria.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, filteredPatients]);
+
   return (
-    <div>
-      <h2>Notifications</h2>
-      <div className="notification-list">
-        {notifications.map((notification) => (
-          <div key={notification.id} className="notification-item">
-            <span>{notification.patientName}</span>
-            <span>{notification.notificationType}</span>
-            <span>{notification.message}</span>
+    <div className="filtered-patient-list-container">
+      <Typography variant="h2">Filtered Patients</Typography>
+      <div className="filtered-patient-list">
+        <div className="filtered-patient-header">
+          <strong>Name</strong>
+          <strong>Birth Date</strong>
+          <strong>Gender</strong>
+          <strong>Email</strong>
+          <strong>Phone Number</strong>
+          <strong>Notification Preference</strong>
+          <strong>Target Criteria</strong>
+        </div>
+        {filteredPatientsList.map((patient) => (
+          <div key={patient.id} className="filtered-patient-item">
+            <span>{patient.name}</span>
+            <span>{patient.birthDate}</span>
+            <span>{patient.gender}</span>
+            <span>{patient.email}</span>
+            <span>{patient.phoneNumber}</span>
+            <span>{patient.notificationPreference}</span>
+            <span>{patient.targetCriteria.targetCriteria}</span>
           </div>
         ))}
       </div>
     </div>
   );
 }
+function NotificationList({ notifications }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredNotifications, setFilteredNotifications] = useState(notifications);
 
-function FilteredPatientList({ filteredPatients }) {
+  useEffect(() => {
+    setFilteredNotifications(
+      notifications.filter(notification =>
+        notification.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notification.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notification.notificationType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notification.phoneNumber.includes(searchTerm) ||
+        notification.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        notification.message.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, notifications]);
+
   return (
-    <div>
-      <h2>Filtered Patients</h2>
-      <div className="filtered-patient-list">
-        {filteredPatients.map((patient) => (
-          <div key={patient.id} className="filtered-patient-item">
-            <span>{patient.name}</span>
-            <span>{patient.age}</span>
-            <span>{patient.gender}</span>
-            <span>{patient.criteria}</span>
+    <div className="notification-list-container">
+      <Typography variant="h2">Notifications</Typography>
+      <TextField
+        type="text"
+        placeholder="Search notifications..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-input"
+      />
+      <div className="notification-list">
+        <div className="notification-header">
+          <strong>Name</strong>
+          <strong>Gender</strong>
+          <strong>Notification Type</strong>
+          <strong>Phone Number</strong>
+          <strong>Email</strong>
+          <strong>Message</strong>
+        </div>
+        {filteredNotifications.map((notification) => (
+          <div key={notification.id} className="notification-item">
+            <span>{notification.name}</span>
+            <span>{notification.gender}</span>
+            <span>{notification.notificationType}</span>
+            <span>{notification.phoneNumber}</span>
+            <span>{notification.email}</span>
+            <span>{notification.message}</span>
           </div>
         ))}
       </div>

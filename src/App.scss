@@ -1,0 +1,112 @@
+.app {
+  text-align: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  color: #EF9C66;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #EF9C66;
+  margin-bottom: 20px;
+}
+
+button {
+  margin: 10px;
+}
+
+.patient-list,
+.filtered-patient-list,
+.notification-list {
+  margin-top: 20px;
+}
+
+.patient-item,
+.filtered-patient-item,
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #fff;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.patient-header,
+.filtered-patient-header,
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #C8CFA0;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.patient-item span,
+.filtered-patient-item span,
+.notification-item span {
+  flex: 1;
+  text-align: center;
+}
+
+.age-range-container {
+  display: flex;
+  align-items: center;
+}
+
+.age-range-input {
+  width: 80px;
+}
+
+.age-range-separator {
+  margin: 0 10px;
+}
+
+.patient-search {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.patient-search .MuiFormControl-root,
+.patient-search .MuiButton-root {
+  margin: 0 10px;
+}
+
+.filtered-patient-list-container,
+.notification-list-container {
+  margin-top: 20px;
+}
+
+.search-input {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.MuiButton-containedPrimary {
+  background-color: #78ABA8;
+  color: white;
+}
+
+.MuiButton-outlinedPrimary {
+  border-color: #78ABA8;
+  color: #78ABA8;
+}
+
+.MuiDialogTitle-root {
+  background-color: #FCDC94;
+}
+
+.MuiDialogContent-root {
+  background-color: #FFF8E1;
+}
+
+.MuiFormControl-root {
+  min-width: 120px;
+}
