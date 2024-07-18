@@ -16,20 +16,20 @@ The frontend application includes functionalities to:
   - Validates input fields; for example, it shows an alert if the name field is left empty and does not accept the submission.
   - Adds the new patient to the database upon successful validation.
 ![add_patient](https://github.com/user-attachments/assets/8f0d8f3e-20ba-4fc0-a1d0-c1f33d8e2e3a)
+- Delete a patient.
+  - Allows the user to remove a patient from the list.
+  - Confirms the deletion action to prevent accidental deletions.
+- Send notifications to patients.
+  - Simulates sending notifications to patients based on their preferences (e.g., email, SMS).
+  - Lists successful delivery results, indicating which patients received the notifications.
+![startsending](https://github.com/user-attachments/assets/a3437d82-a42d-46bc-865d-eb819ebf8b00)
 
 - Edit patient information.
   - Provides a form to edit existing patient details.
   - Validates inputs similar to the add patient functionality.
   - Updates the patient information in the database upon successful validation.
+![update button](https://github.com/user-attachments/assets/e311bc73-cf7d-40ce-b9ae-f5d57d79d4cd)
 
-- Delete a patient.
-  - Allows the user to remove a patient from the list.
-  - Confirms the deletion action to prevent accidental deletions.
-
-- Send notifications to patients.
-  - Simulates sending notifications to patients based on their preferences (e.g., email, SMS).
-  - Lists successful delivery results, indicating which patients received the notifications.
-![startsending](https://github.com/user-attachments/assets/a3437d82-a42d-46bc-865d-eb819ebf8b00)
 
 - View the list of Target Criteria.
   - Displays a list of patients who meet specific target criteria.
